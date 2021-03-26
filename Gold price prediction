@@ -1,0 +1,41 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.ensemble import RandomForestRegressor
+gold_data = pd.read_csv("gold price dataset.csv")
+print(gold_data)
+gold_data.head()
+gold_data.tail()
+gold_data.shape
+gold_data.info()
+gold_data.isnull().sum()
+gold_data.describe()
+correlation = gold_data.corr()
+print(correlation['GLD'])
+sns.distplot(gold_data['GLD'], color='yellow')
+x = gold_data.drop(['Date','GLD'], axis=1)
+y = gold_data['GLD']
+print(x)
+print(y)
+x_train,x_test,y_train,y_test = train_test_split(x,y, test_size=0.20, random_state=2)
+print(x.shape)
+print(y.shape)
+print(x_train.shape)
+print(x_test.shape)
+regressor= RandomForestRegressor(n_estimators=100)
+regressor.fit(x_train,y_train)
+test_data_prediction = regressor.predict(x_test)
+print(test_data_prediction)
+r_score = metrics.r2_score(y_test, test_data_prediction)
+print(r_score)
+y_test = list(y_test)
+plt.plot(y_test, color='green', label ='Actual Value')
+plt.plot(test_data_prediction, color='red', label='predicted value')
+plt.title('Actual value vs Predicted value')
+plt.xlabel('number of values')
+plt.ylabel('GLD Prices')
+plt.legend()
+plt.show()
